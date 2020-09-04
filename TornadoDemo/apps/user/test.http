@@ -1,0 +1,29 @@
+
+
+### 用户添加
+POST http://localhost:5000/api/v1/user/add
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "name": "Toy",
+  "mobile": "13297847000",
+  "password": "123456",
+  "status": "1"
+}
+
+
+###
+POST http://localhost:5000/api/v1/user/update
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "id": "a9e4a29d253644faa8025ee7c8de87dc",
+  "name": "Tom"
+}
+
+###
+
