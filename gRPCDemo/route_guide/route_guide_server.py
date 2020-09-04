@@ -20,9 +20,9 @@ import logging
 
 import grpc
 
-import route_guide_pb2
-import route_guide_pb2_grpc
-import route_guide_resources
+from gRPCDemo.route_guide import route_guide_pb2
+from gRPCDemo.route_guide import route_guide_pb2_grpc
+from gRPCDemo.route_guide import route_guide_resources
 
 
 def get_feature(feature_db, point):

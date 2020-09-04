@@ -104,6 +104,8 @@ def main():
     # Expected to success.
     thread_enabled_wait_for_ready.join()
 
+    # server.wait_for_termination()
+
     server.stop(None)
     channel.close()
 

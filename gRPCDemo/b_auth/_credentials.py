@@ -11,21 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests of the wait-for-ready example."""
+"""Loading SSL credentials for gRPC Python authentication example."""
 
-import unittest
-import logging
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-from gRPCDemo.c_wait_for_ready import wait_for_ready_example
-
-
-class WaitForReadyExampleTest(unittest.TestCase):
-
-    def test_wait_for_ready_example(self):
-        wait_for_ready_example.main()
-        # No unhandled exception raised, no deadlock, test passed!
+import os
 
 
-if __name__ == '__main__':
-    logging.basicConfig()
-    unittest.main(verbosity=2)
+def _load_credential_from_file(filepath):
+    real_path = os.path.join(os.path.dirname(__file__), filepath)
+    with open(real_path, 'rb') as f:
+        return f.read()
+
+
+SERVER_CERTIFICATE = _load_credential_from_file('credentials/localhost.crt')
+SERVER_CERTIFICATE_KEY = _load_credential_from_file('credentials/localhost.key')
+ROOT_CERTIFICATE = _load_credential_from_file('credentials/root.crt')

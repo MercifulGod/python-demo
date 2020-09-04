@@ -29,8 +29,8 @@ import sys
 
 import grpc
 
-import prime_pb2
-import prime_pb2_grpc
+from gRPCDemo.multiprocessing import prime_pb2
+from gRPCDemo.multiprocessing import prime_pb2_grpc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -68,8 +68,8 @@ def _run_server(bind_address):
     options = (('grpc.so_reuseport', 1),)
 
     server = grpc.server(futures.ThreadPoolExecutor(
-        max_workers=_THREAD_CONCURRENCY,),
-                         options=options)
+        max_workers=_THREAD_CONCURRENCY, ),
+        options=options)
     prime_pb2_grpc.add_PrimeCheckerServicer_to_server(PrimeChecker(), server)
     server.add_insecure_port(bind_address)
     server.start()

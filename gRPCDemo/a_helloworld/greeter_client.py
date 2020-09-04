@@ -1,4 +1,4 @@
-# Copyright 2019 The gRPC Authors
+# Copyright 2015 gRPC authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,21 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests of the wait-for-ready example."""
+"""The Python implementation of the GRPC helloworld.Greeter client."""
 
-import unittest
+from __future__ import print_function
 import logging
 
-from gRPCDemo.c_wait_for_ready import wait_for_ready_example
+import grpc
+
+from gRPCDemo.a_helloworld import helloworld_pb2
+from gRPCDemo.a_helloworld import helloworld_pb2_grpc
 
 
-class WaitForReadyExampleTest(unittest.TestCase):
-
-    def test_wait_for_ready_example(self):
-        wait_for_ready_example.main()
-        # No unhandled exception raised, no deadlock, test passed!
+def main():
+    with grpc.insecure_channel('localhost:50051') as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.SayHello(helloworld_pb2.HelloRequest(name='you'))
+    print("Greeter client received: " + response.message)
 
 
 if __name__ == '__main__':
     logging.basicConfig()
-    unittest.main(verbosity=2)
+    main()

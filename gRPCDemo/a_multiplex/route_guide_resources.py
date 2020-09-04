@@ -15,7 +15,7 @@
 
 import json
 
-from gRPCDemo.route_guide import route_guide_pb2
+from gRPCDemo.a_multiplex import route_guide_pb2
 
 
 def read_route_guide_database():
