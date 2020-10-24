@@ -1,3 +1,4 @@
+![Image text](https://github.com/MercifulGod/python-demo/blob/master/GoWebDemo/blog-back/static/img/hom.jpg)
 
 
 
