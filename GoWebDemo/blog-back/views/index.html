@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <title>表格操作</title>
+</head>
+
+<body>
+
+  <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.css" rel="stylesheet">
+
+  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.js"></script>
+
+  <style>
+    .select {
+      width: 100%;
+    }
+
+    .like {
+      margin-right: 10px;
+    }
+  </style>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">新增或编辑</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- <form> -->
+          <input type="text" hidden="hidden" id="id">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" aria-describedby="emailHelp">
+          </div>
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input type="text" class="form-control" id="age">
+          </div>
+          <!-- </form> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="save">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toolbar">
+    <div class="row">
+      <button id="batchDelete" class="btn btn-danger" disabled>
+        <i class="fa fa-trash"></i> Delete
+      </button>
+      <button id="add" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        <i class="fa fa-trash"></i> Add
+      </button>
+    </div>
+
+  </div>
+
+  <table id="table" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-minimum-count-columns="2"
+    data-show-pagination-switch="true" data-pagination="true" data-id-field="id" data-page-list="[3, 5, 10, 20, all]"
+    data-side-pagination="server" data-url="/user/list">
+  </table>
+
+  <script>
+    var $table = $('#table')
+    var $remove = $('#batchDelete')
+    var selections = []
+
+    function getIdSelections() {
+      return $.map($table.bootstrapTable('getSelections'), function (row) {
+        return row.id
+      })
+    }
+
+    function operateFormatter(value, row, index) {
+      return [
+        '<button id="edit" class="btn btn-primary"  data-toggle="modal" data-target="#exampleModal"><i class="fa fa-trash"></i> Edit </button>  ',
+        '<button id="remove" class="btn btn-primary"><i class="fa fa-trash"></i> Delete </button>',
+      ].join('')
+    }
+
+    window.operateEvents = {
+      'click #edit': function (e, value, row, index) {
+        $("#id").val(row.Id);
+        $("#name").val(row.Name);
+        $("#age").val(row.Age);
+      },
+      'click #remove': function (e, value, row, index) {
+        $.post("/user/delete",
+          {
+            id: row.Id,
+          },
+          function (data, status) {
+            $("#table").bootstrapTable("refresh");
+          });
+      }
+    }
+
+
+    function initTable() {
+      $table.bootstrapTable('destroy').bootstrapTable({
+        height: 550,
+        pageSize: 5,
+        columns: [
+          {
+            field: 'state',
+            checkbox: true,
+            align: 'center',
+            valign: 'middle'
+          }, {
+            title: 'Item ID',
+            field: 'Id',
+            align: 'center',
+            valign: 'middle',
+            sortable: true,
+          }, {
+            field: 'Name',
+            title: 'Item Name',
+            sortable: true,
+            align: 'center'
+          }, {
+            field: 'Age',
+            title: 'Item Price',
+            sortable: true,
+            align: 'center',
+          }, {
+            field: 'operate',
+            title: 'Item Operate',
+            align: 'center',
+            clickToSelect: false,
+            events: window.operateEvents,
+            formatter: operateFormatter
+          }
+        ]
+      })
+
+      $remove.click(function () {
+        var ids = getIdSelections()
+        $table.bootstrapTable('remove', {
+          field: 'id',
+          values: ids
+        })
+        $remove.prop('disabled', true)
+      })
+    }
+
+    function insertOrUpdate(url, data) {
+      $.post(url, data, function (data, status) {
+        $("#table").bootstrapTable("refresh");
+      });
+    }
+    $("#save").click(function () {
+      let user = { name: $("#name").val(), age: $("#age").val() };
+      if ($("#id").val() == null || $("#id").val() == "") {
+        insertOrUpdate("/user/create", user)
+      } else {
+        user.id = $("#id").val();
+        insertOrUpdate("/user/update", user)
+      }
+    });
+
+    $("#add").click(function () {
+      $("#id").val("");
+      $("#name").val("");
+      $("#age").val("");
+    });
+
+    $(function () {
+      initTable();
+    })
+  </script>
+</body>
+
+</html>
